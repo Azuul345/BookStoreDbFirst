@@ -15,7 +15,8 @@ namespace BookStoreDbFirst
                 Console.WriteLine("Admin Menu");
                 Console.WriteLine("[1]: Check StockBalande");
                 Console.WriteLine("[2]: Update StockBalande From existing Books");
-                Console.WriteLine("[3]: Exit Program");
+                Console.WriteLine("[3]: Add new book title");
+                Console.WriteLine("[4]: Exit Program");
 
                 string choice = Console.ReadLine();
 
@@ -28,6 +29,9 @@ namespace BookStoreDbFirst
                         await HelpMethods.UpdateStockBalanceFromExisting(dbservice);
                         break;
                     case "3":
+                        await HelpMethods.AddNewBookTitle(dbservice);
+                        break;
+                    case "4":
                         Environment.Exit(0);
                         break;
                 }
