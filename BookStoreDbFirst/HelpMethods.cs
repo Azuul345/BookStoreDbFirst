@@ -129,7 +129,7 @@ namespace BookStoreDbFirst
             return author;
         }
 
-        public static async Task ChooseFromExistingPublishers(DbService dbs)
+        public static async Task<Publisher> ChooseFromExistingPublishers(DbService dbs)
         {
             Console.WriteLine("Enter index of publishers for the title");
             var allpublishers = await dbs.GetAllPublishers();
@@ -142,39 +142,96 @@ namespace BookStoreDbFirst
             if (!int.TryParse(Console.ReadLine(), out int publisherId) || publisherId > allpublishers.Count || publisherId <= 0)
             {
                 Console.WriteLine("Invalid input for publisher index");
-                return;
+                return null;
             }
 
             var publisher = allpublishers[publisherId - 1];
-            Console.WriteLine($"Selected publisher: {publisher.PublisherName}");
+            //Console.WriteLine($"Selected publisher: {publisher.PublisherName}");
+            return publisher;
         }
+
 
         public static async Task AddNewBookTitle(DbService dbs)
         {
-            Console.WriteLine("Would you like to add title from existing authors? \n[1] Yes \n[2] No");
-            string auChoice = Console.ReadLine();
+            //Console.WriteLine("Would you like to add title from existing authors? \n[1] Yes \n[2] No");
+            //string auChoice = Console.ReadLine();
+            //Author? author = null;
 
-            Author? author = null;
-            if (auChoice == "1")
+            //if (auChoice == "1")
+            //{
+            //    author = await ChooseFromExistingAuthor(dbs);
+            //    if (author == null)
+            //    {
+            //        Console.WriteLine("No Author selected");
+            //        return;
+            //    }
+            //    Console.WriteLine($"Chosen Author: {author.FirstName} {author.LastName}");
+            //    //Console.WriteLine("End of test //////////////////////////////");
+            //}
+            //else if (auChoice == "2")
+            //{
+            //    Console.WriteLine("Adding method soon");
+            //}
+            //else
+            //{
+            //    Console.WriteLine("Invalid Choice");
+            //    return;
+            //}
+
+
+            //Console.WriteLine("Would like to add the publisher from database?\n[1] Yes\n[2] No");
+            //string puChoice = Console.ReadLine();
+            //Publisher? publisher = null;
+            //if (puChoice == "1")
+            //{
+            //    publisher = await ChooseFromExistingPublishers(dbs);
+            //    if (publisher == null)
+            //    {
+            //        Console.WriteLine("No publisher selected");
+            //        return;
+            //    }
+            //    Console.WriteLine($"Chosen Publisher: {publisher.PublisherName}");
+            //}
+            //else if (puChoice == "2")
+            //{
+            //    Console.WriteLine("Adding method soon");
+            //}
+            //else
+            //{
+            //    Console.WriteLine("invalid choice");
+            //    return;
+            //}
+
+            Console.WriteLine("Would you like to add form existing genre?");
+            var allGenres = await dbs.GellAllGenre();
+            foreach (var g in allGenres)
             {
-                author = await ChooseFromExistingAuthor(dbs);
-                if (author == null)
+                Console.WriteLine($"ID: {g.GenreId} Genre: {g.GenreName}");
+            }
+            Console.WriteLine("\n[1] Yes\n[2] Add another Genre");
+            string geChoice = Console.ReadLine();
+            Genre? genre = null;
+
+            if (geChoice == "1")
+            {
+                Console.WriteLine("Select the Genre ID of title: ");
+                if (!int.TryParse(Console.ReadLine(), out var genreID) || genreID > allGenres.Count || genreID <= 0)
                 {
-                    Console.WriteLine("No Author selected");
+                    Console.WriteLine("Invalid input for genre");
                     return;
                 }
-                Console.WriteLine($"Chosen Author: {author.FirstName} {author.LastName}");
-                //Console.WriteLine("End of test //////////////////////////////");
-
+                genre = allGenres.FirstOrDefault(g => g.GenreId == genreID); //check if ok
             }
-            else if (auChoice == "2")
+            else if (geChoice == "2")
             {
-                Console.WriteLine("Adding method soon");
+                Console.WriteLine("adding method");
             }
             else
             {
-                Console.WriteLine("Invalid Choice");
+                Console.WriteLine("Invalid choice");
+                return;
             }
+            Console.WriteLine($"Genre: {genre.GenreName}");
 
 
 

@@ -62,7 +62,11 @@ namespace BookStoreDbFirst
         {
             return await _context.Stores.ToListAsync();
         }
-
+        //Genre
+        public async Task<List<Genre>> GellAllGenre()
+        {
+            return await _context.Genres.ToListAsync();
+        }
 
         //UPDATE
         public async Task<StockBalance> UpdateStockBalance(StockBalance stockBalance)
