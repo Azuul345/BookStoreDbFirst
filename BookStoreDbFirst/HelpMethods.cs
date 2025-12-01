@@ -123,7 +123,8 @@ namespace BookStoreDbFirst
                 Console.WriteLine("Invalid input for Author index.");
                 return null;
             }
-            var author = allAuthors[authorID - 1];
+            //var author = allAuthors[authorID - 1] not needed! 
+            var author = allAuthors.FirstOrDefault(p => p.AuthorId == authorID);
 
             //Console.WriteLine($"{author.FirstName} {author.LastName}");
             return author;
@@ -145,7 +146,8 @@ namespace BookStoreDbFirst
                 return null;
             }
 
-            var publisher = allpublishers[publisherId - 1];
+            //var publisher = allpublishers[publisherId - 1]; not needed!
+            var publisher = allpublishers.FirstOrDefault(p => p.PublisherId == publisherId);
             //Console.WriteLine($"Selected publisher: {publisher.PublisherName}");
             return publisher;
         }
@@ -202,37 +204,63 @@ namespace BookStoreDbFirst
             //    return;
             //}
 
-            Console.WriteLine("Would you like to add form existing genre?");
-            var allGenres = await dbs.GellAllGenre();
-            foreach (var g in allGenres)
-            {
-                Console.WriteLine($"ID: {g.GenreId} Genre: {g.GenreName}");
-            }
-            Console.WriteLine("\n[1] Yes\n[2] Add another Genre");
-            string geChoice = Console.ReadLine();
-            Genre? genre = null;
+            //Console.WriteLine("Would you like to add form existing genre?");
+            //var allGenres = await dbs.GellAllGenre();
+            //foreach (var g in allGenres)
+            //{
+            //    Console.WriteLine($"ID: {g.GenreId} Genre: {g.GenreName}");
+            //}
+            //Console.WriteLine("\n[1] Yes\n[2] Add another Genre");
+            //string geChoice = Console.ReadLine();
+            //Genre? genre = null;
 
-            if (geChoice == "1")
+            //if (geChoice == "1")
+            //{
+            //    Console.WriteLine("Select the Genre ID of title: ");
+            //    if (!int.TryParse(Console.ReadLine(), out var genreID) || genreID > allGenres.Count || genreID <= 0)
+            //    {
+            //        Console.WriteLine("Invalid input for genre");
+            //        return;
+            //    }
+            //    genre = allGenres.FirstOrDefault(g => g.GenreId == genreID); //check if ok
+            //}
+            //else if (geChoice == "2")
+            //{
+            //    Console.WriteLine("adding method");
+            //}
+            //else
+            //{
+            //    Console.WriteLine("Invalid choice");
+            //    return;
+            //}
+            //Console.WriteLine($"Genre: {genre.GenreName}");
+
+            ////Date
+            Console.WriteLine("What date was the title released? yyyy/mm/dd \n Add a . , / between year month, and day ");
+            if (!DateOnly.TryParse(Console.ReadLine(), out DateOnly date))
             {
-                Console.WriteLine("Select the Genre ID of title: ");
-                if (!int.TryParse(Console.ReadLine(), out var genreID) || genreID > allGenres.Count || genreID <= 0)
-                {
-                    Console.WriteLine("Invalid input for genre");
-                    return;
-                }
-                genre = allGenres.FirstOrDefault(g => g.GenreId == genreID); //check if ok
-            }
-            else if (geChoice == "2")
-            {
-                Console.WriteLine("adding method");
-            }
-            else
-            {
-                Console.WriteLine("Invalid choice");
+                Console.WriteLine("Invalid Date. \nhas to be yyyymmdd with a / , .  Between year, month and day.");
                 return;
             }
-            Console.WriteLine($"Genre: {genre.GenreName}");
+            Console.WriteLine(date);
 
+            ////ISBN13
+            Console.WriteLine("Add a new ISBN13 Number. \n(Has to be 13 numbers) not matching any other book titles");
+            string strIsbn13 = Console.ReadLine();
+            var titles = await dbs.GetAllBookTitlesInfo();
+
+
+            if (strIsbn13.Length != 13 || !long.TryParse(strIsbn13, out long isbn13))
+            {
+                Console.WriteLine("ISBN13 Has to be 13 numbers");
+                return;
+            }
+            bool isbn13exist = titles.Any(i => i.Isbn13 == strIsbn13);
+            if (isbn13exist)
+            {
+                Console.WriteLine("ISBN13 number already exist for another title");
+                return;
+            }
 
 
 
