@@ -67,6 +67,8 @@ namespace BookStoreDbFirst
         {
             return await _context.Genres.ToListAsync();
         }
+        //Language
+
 
         //UPDATE
         public async Task<StockBalance> UpdateStockBalance(StockBalance stockBalance)
