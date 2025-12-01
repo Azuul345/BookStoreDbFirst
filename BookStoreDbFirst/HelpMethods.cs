@@ -222,7 +222,7 @@ namespace BookStoreDbFirst
             //        Console.WriteLine("Invalid input for genre");
             //        return;
             //    }
-            //    genre = allGenres.FirstOrDefault(g => g.GenreId == genreID); //check if ok
+            //    genre = allGenres.FirstOrDefault(g => g.GenreId == genreID); 
             //}
             //else if (geChoice == "2")
             //{
@@ -264,19 +264,50 @@ namespace BookStoreDbFirst
             //    return;
             //}
 
-            Console.WriteLine("What Language is the title published in?");
 
-            // Language, price left and title for new book.
-            var langagues = titles.Select(t => t.Language).Distinct().ToList();
+            ////Language
+            //    Console.WriteLine("What Language is the title published in?");
 
-            for (int i = 0; i < langagues.Count; i++)
-            {
-                Console.WriteLine($"Index: {i + 1} language: {langagues[i]}");
-            }
-            Console.WriteLine("Chose existing language? [1] yes\nEnter a new langague");
+            //    var langagues = titles.Select(t => t.Language).Distinct().ToList();
 
+            //    for (int i = 0; i < langagues.Count; i++)
+            //    {
+            //        Console.WriteLine($"Index: {i + 1} language: {langagues[i]}");
+            //    }
+            //    Console.WriteLine("[1]: Chose existing language?\n[2]: Enter a new language");
+
+            //    string? selectedLanguae = null;
+            //    string langChoice = Console.ReadLine();
+            //    if (langChoice == "1")
+            //    {
+            //        Console.Write("Enter index of language");
+            //        if (!int.TryParse(Console.ReadLine(), out int langageindex) || langageindex <= 0 || langageindex > langagues.Count)
+            //        {
+            //            Console.WriteLine("Invalid choice for language");
+            //            return;
+            //        }
+            //        selectedLanguae = langagues[langageindex - 1];
+            //    }
+            //    else if (langChoice == "2")
+            //    {
+            //        Console.WriteLine("Add method to add language");
+            //    }
+            //    else
+            //    {
+            //        Console.WriteLine("Invalid choice");
+            //    }
+            //    Console.WriteLine($"Chosen language: {selectedLanguae} ");
+
+
+            ////Price 
+            Console.WriteLine("How much does the new title cost?");
+
+            decimal.TryParse(Console.ReadLine(), out decimal price);
+
+            Console.WriteLine(price);
         }
 
+        //  price left and title for new book.
 
         //add new title 
         //add all the information necessary ()
