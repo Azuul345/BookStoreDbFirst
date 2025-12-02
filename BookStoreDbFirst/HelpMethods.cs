@@ -19,6 +19,20 @@ namespace BookStoreDbFirst
             }
         }
 
+        public static async Task ViewAllBookTitles(DbService dbs)
+        {
+            var titles = await dbs.GetAllBookTitlesInfo();
+            Console.WriteLine("All book titles available and their information");
+
+            foreach (var t in titles)
+            {
+                Console.WriteLine($"ISBN13: {t.Isbn13}, Author: {t.Author.FirstName} {t.Author.LastName} Publisher: {t.Publisher.PublisherName}, " +
+                    $"Genre: {t.Genre.GenreName} Release date: {t.ReleaseDate} Price: {t.Price} Language: {t.Language} Title: {t.Title}");
+
+            }
+            Console.WriteLine($"Total amount of titles: {titles.Count}");
+        }
+
 
         public static async Task UpdateStockBalanceFromExisting(DbService dbs)
         {
@@ -138,7 +152,41 @@ namespace BookStoreDbFirst
             }
         }
 
-        //maybe change from condition checking count to see that id matches any of existing ones instead
+        public static async Task<Author> CreateANewAuthor(DbService dbs)
+        {
+            DateOnly? birthday = null;
+
+            Console.Write("Enter Authors first name: ");
+            string firstName = Console.ReadLine();
+
+            Console.Write("Enter Authors last name: ");
+            string lastName = Console.ReadLine();
+
+            Console.Write("What is the authors birthday? Enter yyyy/mm/dd: ");
+            while (birthday == null)
+            {
+
+                if (!DateOnly.TryParse(Console.ReadLine(), out DateOnly date))
+                {
+                    Console.Write("Invalid date. set a , . or / between year, month and year: ");
+                    continue;
+                }
+                birthday = date;
+            }
+
+            var author = new Author
+            {
+                FirstName = firstName,
+                LastName = lastName,
+                Birthday = birthday,
+
+            };
+            await dbs.CreateNewAuthor(author);
+            return author;
+
+        }
+
+
         public static async Task<Publisher> ChooseFromExistingPublishers(DbService dbs)
         {
             while (true)
@@ -163,8 +211,25 @@ namespace BookStoreDbFirst
                 var publisher = allpublishers.FirstOrDefault(p => p.PublisherId == publisherId);
                 //Console.WriteLine($"Selected publisher: {publisher.PublisherName}");
                 return publisher;
-                break;
+
             }
+        }
+
+        public static async Task<Publisher> CreateANewPublisher(DbService dbs)
+        {
+            Console.Write("Enter the name of publisher: ");
+            string name = Console.ReadLine();
+
+            Console.Write("From what country is the publisher from?: ");
+            string country = Console.ReadLine();
+
+            var publisher = new Publisher
+            {
+                PublisherName = name,
+                Country = country
+            };
+            await dbs.CreateNewPublisher(publisher);
+            return publisher;
         }
 
 
@@ -197,20 +262,18 @@ namespace BookStoreDbFirst
                     }
                     Console.WriteLine($"Chosen Author: {author.FirstName} {author.LastName}");
                     return author;
-                    break;
+
                     //Console.WriteLine("End of test //////////////////////////////");
                 }
                 else if (auChoice == "2")
                 {
-                    Console.WriteLine("Adding method soon");
-                    return null;
-                    break;
+                    author = await CreateANewAuthor(dbs);
+                    return author;
                 }
                 else
                 {
                     Console.WriteLine("Invalid Choice");
                     continue;
-
                 }
             }
         }
@@ -240,11 +303,12 @@ namespace BookStoreDbFirst
                     }
                     Console.WriteLine($"Chosen Publisher: {publisher.PublisherName}");
                     return publisher;
-                    break;
+
                 }
                 else if (puChoice == "2")
                 {
-                    Console.WriteLine("Adding method soon");
+                    publisher = await CreateANewPublisher(dbs);
+                    return publisher;
                 }
                 else
                 {
@@ -279,11 +343,18 @@ namespace BookStoreDbFirst
                     genre = allGenres.FirstOrDefault(g => g.GenreId == genreID);
                     Console.WriteLine($"Genre: {genre.GenreName}");
                     return genre;
-                    break;
+
                 }
                 else if (geChoice == "2")
                 {
-                    Console.WriteLine("adding method");
+                    Console.Write("What genre is the title? ");
+                    string genretype = Console.ReadLine();
+                    genre = new Genre
+                    {
+                        GenreName = genretype
+                    };
+                    await dbs.CreateNewGenre(genre);
+                    return genre;
                 }
                 else
                 {
@@ -332,7 +403,7 @@ namespace BookStoreDbFirst
                     continue;
                 }
                 return strIsbn13;
-                break;
+
             }
         }
 
@@ -367,7 +438,9 @@ namespace BookStoreDbFirst
                 }
                 else if (langChoice == "2")
                 {
-                    Console.WriteLine("Add method to add language");
+                    Console.Write("Enter what language the title is in: ");
+                    string newLanguage = Console.ReadLine();
+                    return newLanguage;
                 }
                 else
                 {
@@ -383,7 +456,7 @@ namespace BookStoreDbFirst
             while (true)
             {
 
-                Console.WriteLine("How much does the new title cost?");
+                Console.WriteLine("How much does the new title cost?\nif more than two decimals are entered it will either round up or down");
 
                 decimal.TryParse(Console.ReadLine(), CultureInfo.CurrentUICulture, out decimal price);
                 if (price == 0)
@@ -391,6 +464,7 @@ namespace BookStoreDbFirst
                     Console.WriteLine("Invalid choice");
                     continue;
                 }
+                price = Math.Round(price, 2);
                 Console.WriteLine($"Price: {price}");
                 return price;
 
@@ -400,30 +474,44 @@ namespace BookStoreDbFirst
         public static async Task AddNewBookTitle(DbService dbs)
         {
 
-            //var author = await SelectAuthor(dbs);
+            var author = await SelectAuthor(dbs);
             ////Console.WriteLine($"Test// {author.FirstName} {author.LastName}");
 
-            //var publisher = await SelectPublisher(dbs);
+            var publisher = await SelectPublisher(dbs);
             //Console.WriteLine($"Publisher Name {publisher.PublisherName}");
 
-            //var genre = await SelectGenre(dbs);
+            var genre = await SelectGenre(dbs);
             //Console.WriteLine($"//Test {genre.GenreName}");
 
-            //var date = SelectDate();
+            var date = SelectDate();
             //Console.WriteLine($"//Test Selected date: {date}");
 
-            //var isbn13 = await SelectISBN13(dbs);
+            var isbn13 = await SelectISBN13(dbs);
             //Console.WriteLine(isbn13);
 
-            //var language = await SelectLanguage(dbs);
+            var language = await SelectLanguage(dbs);
             //Console.WriteLine($"//Test Selected lan: {language}");
 
             var price = SelectPrice();
+            //Console.WriteLine($"Price: {price}");
 
+            Console.WriteLine("Enter the name of the new title");
+            string titlename = Console.ReadLine();
 
-            //Console.WriteLine("Enter the name of the new title");
-            //string titlename = Console.ReadLine();
+            var title = new BookTitle
+            {
+                Author = author,
+                Publisher = publisher,
+                Genre = genre,
+                ReleaseDate = date,
+                Isbn13 = isbn13,
+                Language = language,
+                Price = price,
+                Title = titlename
 
+            };
+
+            await dbs.CreateBookTitle(title);
         }
 
         //  price left and title for new book.

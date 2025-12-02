@@ -29,6 +29,21 @@ namespace BookStoreDbFirst
             return author;
         }
 
+        public async Task<Publisher> CreateNewPublisher(Publisher publisher)
+        {
+            _context.Publishers.Add(publisher);
+            await _context.SaveChangesAsync();
+            return publisher;
+        }
+
+        public async Task<Genre> CreateNewGenre(Genre genre)
+        {
+            _context.Genres.Add(genre);
+            await _context.SaveChangesAsync();
+            return genre;
+        }
+
+
 
 
         //READ
@@ -40,12 +55,13 @@ namespace BookStoreDbFirst
                 .ToListAsync();
         }
 
+
         //Author
         public async Task<List<Author>> GetAllAuthors()
         {
             return await _context.Authors.ToListAsync();
         }
-
+        //book
         public async Task<List<Publisher>> GetAllPublishers()
         {
             return await _context.Publishers.ToListAsync();
@@ -54,7 +70,11 @@ namespace BookStoreDbFirst
         //BookTitle
         public async Task<List<BookTitle>> GetAllBookTitlesInfo()
         {
-            return await _context.BookTitles.ToListAsync();
+            return await _context.BookTitles
+                .Include(a => a.Author)
+                .Include(g => g.Genre)
+                .Include(p => p.Publisher)
+                .ToListAsync();
 
         }
         //Stores
@@ -78,10 +98,8 @@ namespace BookStoreDbFirst
             return stockBalance;
         }
 
-        //public async Task<List<Store>> GetAllStores()
-        //{
-        //    return await _context.Stores.ToListAsync();
-        //}
+        //Delete
+
 
 
 
