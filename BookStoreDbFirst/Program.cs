@@ -19,7 +19,9 @@ namespace BookStoreDbFirst
                 Console.WriteLine("[4]: See all titles in database");
                 Console.WriteLine("[5]: Update book title");
                 Console.WriteLine("[6]: Update Author information");
-                Console.WriteLine("[7]: Exit Program");
+                Console.WriteLine("[7]: Delete Book title");
+                Console.WriteLine("[8]: Delete Author");
+                Console.WriteLine("[9]: Exit Program");
 
                 string choice = Console.ReadLine();
 
@@ -44,6 +46,12 @@ namespace BookStoreDbFirst
                         await HelpMethods.UpdateAuthor(dbservice);
                         break;
                     case "7":
+                        await HelpMethods.DeleteBookTitle(dbservice);
+                        break;
+                    case "8":
+                        await HelpMethods.DeleteAuhtor(dbservice);
+                        break;
+                    case "9":
                         Environment.Exit(0);
                         break;
                         //case "6":

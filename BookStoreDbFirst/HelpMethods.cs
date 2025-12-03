@@ -22,7 +22,7 @@ namespace BookStoreDbFirst
         public static async Task ViewAllBookTitles(DbService dbs)
         {
             var titles = await dbs.GetAllBookTitlesInfo();
-            Console.WriteLine("All book titles available and their information");
+            Console.WriteLine("All book titles available and information\n");
 
             foreach (var t in titles)
             {
@@ -36,7 +36,7 @@ namespace BookStoreDbFirst
         public static async Task<BookTitle> SelectBookTitle(DbService dbs)
         {
             await ShowAllBookTitles(dbs);
-            Console.Write("Select Book Index to update: ");
+            Console.Write("Select Book Index: ");
 
             var titlesinfo = await dbs.GetAllBookTitlesInfo();
 
@@ -56,6 +56,63 @@ namespace BookStoreDbFirst
             }
             return selectedTitle;
         }
+
+
+
+
+
+        public static async Task<Author> SelectAuthor(DbService dbs)
+        {
+            while (true)
+            {
+
+                Console.WriteLine("Would you like to select from existing authors?");
+                var allAuthors = await dbs.GetAllAuthors();
+
+                Console.WriteLine(" \n[1] Yes \n[2] No");
+                string auChoice = Console.ReadLine();
+                Author? author = null;
+
+                if (auChoice == "1")
+                {
+                    author = await ChooseFromExistingAuthor(dbs);
+                    if (author == null) //maybe not needed
+                    {
+                        Console.WriteLine("No Author selected");
+
+                    }
+                    Console.WriteLine($"Chosen Author: {author.FirstName} {author.LastName}");
+                    return author;
+                }
+                else if (auChoice == "2")
+                {
+                    author = await CreateANewAuthor(dbs);
+                    return author;
+                }
+                else
+                {
+                    Console.WriteLine("Invalid Choice");
+                    continue;
+                }
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         public static async Task UpdateStockBalanceFromExisting(DbService dbs)
         {
@@ -141,7 +198,7 @@ namespace BookStoreDbFirst
             var genre = await SelectGenre(dbs);
             Console.WriteLine("When was the title released? ");
             var date = SelectDate();
-            //var isbn13 = await SelectISBN13(dbs); //was not able to change without maaking adjustments and I'm not sure if this is something that is suppose to be allowed to be changed either. 
+            //var isbn13 = await SelectISBN13(dbs); //was not able to change without making adjustments and I'm not sure if this is something that is suppose to be allowed to be changed either. 
             var language = await SelectLanguage(dbs);
             var price = SelectPrice();
 
@@ -155,13 +212,14 @@ namespace BookStoreDbFirst
             //book.Isbn13 = isbn13;
             book.Language = language;
             book.Price = price;
+            book.Title = title;
             await dbs.UpdateBooktitle(book);
             Console.WriteLine("Title has been updated");
         }
 
         public static async Task UpdateAuthor(DbService dbs)
         {
-            var author = await SelectAuthor(dbs);
+            var author = await ChooseFromExistingAuthor(dbs);
             Console.Write("Enter first name: ");
             string firstname = Console.ReadLine();
             Console.Write("Enter last name: ");
@@ -179,22 +237,39 @@ namespace BookStoreDbFirst
         }
 
 
+        //Delete 
+
+        public static async Task DeleteBookTitle(DbService dbs)
+        {
+            var title = await SelectBookTitle(dbs);
+            var deleted = await dbs.DeletBookTitle(title.Isbn13);
+            Console.WriteLine(deleted ? "Title deleted" : "Title not found");
+        }
+
+        public static async Task DeleteAuhtor(DbService dbs)
+        {
+            var author = await ChooseFromExistingAuthor(dbs);
+            var deleted = await dbs.DeleteAuthor(author.AuthorId);
+            Console.WriteLine(deleted ? "Author deleted" : "Author not found");
+        }
 
 
 
-
-
-
-
-        // CREATE TITLE
+        // CREATE TITLE and it's properties 
 
         public static async Task<Author> ChooseFromExistingAuthor(DbService dbs)
         {
+            var allAuthors = await dbs.GetAllAuthors();
             while (true)
             {
+                for (int i = 0; i < allAuthors.Count; i++)
+                {
+                    Console.WriteLine($"Author ID: {allAuthors[i].AuthorId}. First Name: {allAuthors[i].FirstName} Last Name: {allAuthors[i].LastName} Birthday: {allAuthors[i].Birthday} ");
+
+                }
 
                 Console.WriteLine("Enter Author ID of Author you wish to select");
-                var allAuthors = await dbs.GetAllAuthors();
+                //var allAuthors = await dbs.GetAllAuthors();
 
 
                 if (!int.TryParse(Console.ReadLine(), out int authorID) || !allAuthors.Any(aid => aid.AuthorId == authorID) || authorID <= 0)
@@ -283,47 +358,47 @@ namespace BookStoreDbFirst
 
 
 
-        public static async Task<Author> SelectAuthor(DbService dbs)
-        {
-            while (true)
-            {
+        //public static async Task<Author> SelectAuthor(DbService dbs)
+        //{
+        //    while (true)
+        //    {
 
-                Console.WriteLine("Would you like to select from existing authors?");
-                var allAuthors = await dbs.GetAllAuthors();
+        //        Console.WriteLine("Would you like to select from existing authors?");
+        //        var allAuthors = await dbs.GetAllAuthors();
 
-                for (int i = 0; i < allAuthors.Count; i++)
-                {
-                    Console.WriteLine($"Author ID: {allAuthors[i].AuthorId}. First Name: {allAuthors[i].FirstName} Last Name: {allAuthors[i].LastName} Birthday: {allAuthors[i].Birthday} ");
+        //        for (int i = 0; i < allAuthors.Count; i++)
+        //        {
+        //            Console.WriteLine($"Author ID: {allAuthors[i].AuthorId}. First Name: {allAuthors[i].FirstName} Last Name: {allAuthors[i].LastName} Birthday: {allAuthors[i].Birthday} ");
 
-                }
+        //        }
 
-                Console.WriteLine(" \n[1] Yes \n[2] No");
-                string auChoice = Console.ReadLine();
-                Author? author = null;
+        //        Console.WriteLine(" \n[1] Yes \n[2] No");
+        //        string auChoice = Console.ReadLine();
+        //        Author? author = null;
 
-                if (auChoice == "1")
-                {
-                    author = await ChooseFromExistingAuthor(dbs);
-                    if (author == null) //maybe not needed
-                    {
-                        Console.WriteLine("No Author selected");
+        //        if (auChoice == "1")
+        //        {
+        //            author = await ChooseFromExistingAuthor(dbs);
+        //            if (author == null) //maybe not needed
+        //            {
+        //                Console.WriteLine("No Author selected");
 
-                    }
-                    Console.WriteLine($"Chosen Author: {author.FirstName} {author.LastName}");
-                    return author;
-                }
-                else if (auChoice == "2")
-                {
-                    author = await CreateANewAuthor(dbs);
-                    return author;
-                }
-                else
-                {
-                    Console.WriteLine("Invalid Choice");
-                    continue;
-                }
-            }
-        }
+        //            }
+        //            Console.WriteLine($"Chosen Author: {author.FirstName} {author.LastName}");
+        //            return author;
+        //        }
+        //        else if (auChoice == "2")
+        //        {
+        //            author = await CreateANewAuthor(dbs);
+        //            return author;
+        //        }
+        //        else
+        //        {
+        //            Console.WriteLine("Invalid Choice");
+        //            continue;
+        //        }
+        //    }
+        //}
 
 
         public static async Task<Publisher> SelectPublisher(DbService dbs)
@@ -550,8 +625,6 @@ namespace BookStoreDbFirst
 
 
 
-
-        // - check if author and publisher exist 
 
     }
 }

@@ -111,8 +111,32 @@ namespace BookStoreDbFirst
         }
 
         //===============================Delete===================================
+        public async Task<bool> DeletBookTitle(string isbn13)
+        {
+            var title = await _context.BookTitles.FindAsync(isbn13);
+            if (title == null)
+            {
+                return false;
+            }
+
+            _context.BookTitles.Remove(title);
+            await _context.SaveChangesAsync();
+            return true;
+        }
 
 
+
+        public async Task<bool> DeleteAuthor(int id)
+        {
+            var author = await _context.Authors.FindAsync(id);
+            if (author == null)
+            {
+                return false;
+            }
+            _context.Authors.Remove(author);
+            await _context.SaveChangesAsync();
+            return true;
+        }
 
 
     }
