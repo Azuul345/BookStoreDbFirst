@@ -361,8 +361,6 @@ namespace BookStoreDbFirst
                     Console.WriteLine("Invalid choice");
                     continue;
                 }
-
-
             }
         }
 
