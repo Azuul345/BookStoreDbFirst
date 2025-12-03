@@ -14,7 +14,7 @@ namespace BookStoreDbFirst
         }
 
 
-        //Create 
+        //======================Create============================ 
         public async Task<BookTitle> CreateBookTitle(BookTitle title)
         {
             _context.BookTitles.Add(title);
@@ -46,7 +46,8 @@ namespace BookStoreDbFirst
 
 
 
-        //READ
+        ///=========================READ=====================
+        //Stock Balance
         public async Task<List<StockBalance>> GetStockBalandeInfo()
         {
             return await _context.StockBalances
@@ -90,7 +91,7 @@ namespace BookStoreDbFirst
         //Language
 
 
-        //UPDATE
+        ///==========================UPDATE===================================
         public async Task<StockBalance> UpdateStockBalance(StockBalance stockBalance)
         {
             //_context.StockBalances.Update(stockBalance);
@@ -98,7 +99,18 @@ namespace BookStoreDbFirst
             return stockBalance;
         }
 
-        //Delete
+        public async Task<BookTitle> UpdateBooktitle(BookTitle bookTitle)
+        {
+            await _context.SaveChangesAsync();
+            return bookTitle;
+        }
+        public async Task<Author> UpdateAuthor(Author author)
+        {
+            await _context.SaveChangesAsync();
+            return author;
+        }
+
+        //===============================Delete===================================
 
 
 

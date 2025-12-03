@@ -45,9 +45,7 @@ public partial class BookStoreContext : DbContext
 
             entity.ToTable("Author");
 
-            entity.Property(e => e.AuthorId)
-                .ValueGeneratedNever()
-                .HasColumnName("AuthorID");
+            entity.Property(e => e.AuthorId).HasColumnName("AuthorID");
             entity.Property(e => e.FirstName)
                 .HasMaxLength(255)
                 .IsUnicode(false);
@@ -183,9 +181,7 @@ public partial class BookStoreContext : DbContext
         {
             entity.HasKey(e => e.PublisherId).HasName("PK__Publishe__4C657E4B82E0D6C7");
 
-            entity.Property(e => e.PublisherId)
-                .ValueGeneratedNever()
-                .HasColumnName("PublisherID");
+            entity.Property(e => e.PublisherId).HasColumnName("PublisherID");
             entity.Property(e => e.Country)
                 .HasMaxLength(255)
                 .IsUnicode(false);

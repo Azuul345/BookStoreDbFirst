@@ -17,8 +17,9 @@ namespace BookStoreDbFirst
                 Console.WriteLine("[2]: Update StockBalande From existing Books");
                 Console.WriteLine("[3]: Add new book title");
                 Console.WriteLine("[4]: See all titles in database");
-                Console.WriteLine("[5]: Exit Program");
-                Console.WriteLine("[6]: test case");
+                Console.WriteLine("[5]: Update book title");
+                Console.WriteLine("[6]: Update Author information");
+                Console.WriteLine("[7]: Exit Program");
 
                 string choice = Console.ReadLine();
 
@@ -37,11 +38,17 @@ namespace BookStoreDbFirst
                         await HelpMethods.ViewAllBookTitles(dbservice);
                         break;
                     case "5":
-                        Environment.Exit(0);
+                        await HelpMethods.UpdateBookTitle(dbservice);
                         break;
                     case "6":
-                        await HelpMethods.CreateANewAuthor(dbservice);
+                        await HelpMethods.UpdateAuthor(dbservice);
                         break;
+                    case "7":
+                        Environment.Exit(0);
+                        break;
+                        //case "6":
+                        //    await HelpMethods.CreateANewAuthor(dbservice);
+                        //    break;
                 }
             }
 

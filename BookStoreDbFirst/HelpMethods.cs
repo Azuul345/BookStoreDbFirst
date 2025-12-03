@@ -27,66 +27,77 @@ namespace BookStoreDbFirst
             foreach (var t in titles)
             {
                 Console.WriteLine($"ISBN13: {t.Isbn13}, Author: {t.Author.FirstName} {t.Author.LastName} Publisher: {t.Publisher.PublisherName}, " +
-                    $"Genre: {t.Genre.GenreName} Release date: {t.ReleaseDate} Price: {t.Price} Language: {t.Language} Title: {t.Title}");
+                    $"Genre: {t.Genre.GenreName} Release date: {t.ReleaseDate} Price: {t.Price} Language: {t.Language} Title: {t.Title} ");
 
             }
             Console.WriteLine($"Total amount of titles: {titles.Count}");
         }
 
+        public static async Task<BookTitle> SelectBookTitle(DbService dbs)
+        {
+            await ShowAllBookTitles(dbs);
+            Console.Write("Select Book Index to update: ");
+
+            var titlesinfo = await dbs.GetAllBookTitlesInfo();
+
+
+            BookTitle? selectedTitle = null;
+            while (selectedTitle == null)
+            {
+
+                if (!int.TryParse(Console.ReadLine(), out int bookID) || bookID < 1 || bookID > titlesinfo.Count)
+                {
+                    Console.Write("select existing index for Book title: ");
+                    continue;
+                }
+
+                string selectedIsbn = titlesinfo[bookID - 1].Isbn13;
+                selectedTitle = titlesinfo.FirstOrDefault(x => x.Isbn13 == selectedIsbn);
+            }
+            return selectedTitle;
+        }
 
         public static async Task UpdateStockBalanceFromExisting(DbService dbs)
         {
+            //store
             await ViewStockBalanceInfo(dbs);
             Console.WriteLine("============ \n");
             Console.Write("Select Store ID to update: ");
 
             var storeinfo = await dbs.GetAllStoreInfo();
-            int storeID = int.Parse(Console.ReadLine());
-            if (storeID < 1 || storeID > storeinfo.Count)
+
+            int? storeID = null;
+            while (storeID == null)
             {
-                Console.WriteLine("No Store Available");
-                return;
+                if (!int.TryParse(Console.ReadLine(), out int id) || id < 1 || id > storeinfo.Count)
+                {
+                    Console.Write("Select correct store ID: ");
+                    continue;
+                }
+                storeID = id;
             }
 
 
-            await ShowAllBookTitles(dbs);
-            Console.WriteLine("Select Book ID to update: ");
-
-            var titlesinfo = await dbs.GetAllBookTitlesInfo();
-
-            var bookID = int.Parse(Console.ReadLine());
-
-
-            //if (!int.TryParse(Console.ReadLine(), out int bookID))
-            //{
-            //    Console.WriteLine("Invalid input for Book ID.");
-            //    return;
-            //}
-
-
-
-            if (bookID < 1 || bookID > titlesinfo.Count)
-            {
-                Console.WriteLine("Book ID does not exist");
-                return;
-            }
-
-
-            string selectedIsbn = titlesinfo[bookID - 1].Isbn13;
+            var title = await SelectBookTitle(dbs);
+            //IF TITLE DOES NOTEXIST IN THE STORE, ADD IT
 
             var stockinfo = await dbs.GetStockBalandeInfo();
 
 
             Console.Write("Update the new amount of books: ");
-            var bookAmount = int.Parse(Console.ReadLine());
+            int? bookAmount = null;
+            while (bookAmount == null)
+            {
+                if (!int.TryParse(Console.ReadLine(), out int amount))
+                {
+                    Console.Write("enter a valid input for amount: ");
+                    continue;
+                }
+                bookAmount = amount;
+            }
 
-            //if (!int.TryParse(Console.ReadLine(), out int bookAmount))
-            //{
-            //    Console.WriteLine("Invalid input for amount.");
-            //    return;
-            //}
 
-            var update = stockinfo.FirstOrDefault(sb => sb.StoreId == storeID && sb.Isbn13 == selectedIsbn);
+            var update = stockinfo.FirstOrDefault(sb => sb.StoreId == storeID && sb.Isbn13 == title.Isbn13);
 
 
             if (update == null)
@@ -121,34 +132,81 @@ namespace BookStoreDbFirst
 
         ///  VG 
 
+        //UPDATE Title 
+        public static async Task UpdateBookTitle(DbService dbs)
+        {
+            var book = await SelectBookTitle(dbs);
+            var author = await SelectAuthor(dbs);
+            var publisher = await SelectPublisher(dbs);
+            var genre = await SelectGenre(dbs);
+            Console.WriteLine("When was the title released? ");
+            var date = SelectDate();
+            //var isbn13 = await SelectISBN13(dbs); //was not able to change without maaking adjustments and I'm not sure if this is something that is suppose to be allowed to be changed either. 
+            var language = await SelectLanguage(dbs);
+            var price = SelectPrice();
+
+            Console.Write("Enter the name of title: ");
+            string title = Console.ReadLine();
+
+            book.Author = author;
+            book.Publisher = publisher;
+            book.Genre = genre;
+            book.ReleaseDate = date;
+            //book.Isbn13 = isbn13;
+            book.Language = language;
+            book.Price = price;
+            await dbs.UpdateBooktitle(book);
+            Console.WriteLine("Title has been updated");
+        }
+
+        public static async Task UpdateAuthor(DbService dbs)
+        {
+            var author = await SelectAuthor(dbs);
+            Console.Write("Enter first name: ");
+            string firstname = Console.ReadLine();
+            Console.Write("Enter last name: ");
+            string lastname = Console.ReadLine();
+            Console.WriteLine("When was the author born");
+            var date = SelectDate();
+
+            author.FirstName = firstname;
+            author.LastName = lastname;
+            author.Birthday = date;
+
+            await dbs.UpdateAuthor(author);
+            Console.WriteLine("Author information has been updated");
+
+        }
 
 
+
+
+
+
+
+
+
+        // CREATE TITLE
 
         public static async Task<Author> ChooseFromExistingAuthor(DbService dbs)
         {
             while (true)
             {
 
-                Console.WriteLine("Enter index of Author you wish to add title to");
+                Console.WriteLine("Enter Author ID of Author you wish to select");
                 var allAuthors = await dbs.GetAllAuthors();
 
-                //for (int i = 0; i < allAuthors.Count; i++)
-                //{
-                //    Console.WriteLine($"Author ID: {allAuthors[i].AuthorId}. First Name: {allAuthors[i].FirstName} Last Name: {allAuthors[i].LastName} Birthday: {allAuthors[i].Birthday} ");
 
-                //}
                 if (!int.TryParse(Console.ReadLine(), out int authorID) || !allAuthors.Any(aid => aid.AuthorId == authorID) || authorID <= 0)
                 {
                     Console.WriteLine("Invalid input for Author ID.");
                     continue;
                     //return null;
                 }
-                //var author = allAuthors[authorID - 1] not needed! 
+
                 var author = allAuthors.FirstOrDefault(p => p.AuthorId == authorID);
 
-                //Console.WriteLine($"{author.FirstName} {author.LastName}");
                 return author;
-                break;
             }
         }
 
@@ -191,14 +249,8 @@ namespace BookStoreDbFirst
         {
             while (true)
             {
-
                 Console.WriteLine("Enter index of publishers for the title");
                 var allpublishers = await dbs.GetAllPublishers();
-
-                //for (int i = 0; i < allpublishers.Count; i++)
-                //{
-                //    Console.WriteLine($"Publisher ID:{allpublishers[i].PublisherId} Publisher: {allpublishers[i].PublisherName} Country: {allpublishers[i].Country}");
-                //}
 
                 if (!int.TryParse(Console.ReadLine(), out int publisherId) || !allpublishers.Any(p => p.PublisherId == publisherId) || publisherId <= 0)
                 {
@@ -206,10 +258,7 @@ namespace BookStoreDbFirst
                     continue;
                     //return null;
                 }
-
-                //var publisher = allpublishers[publisherId - 1]; not needed!
                 var publisher = allpublishers.FirstOrDefault(p => p.PublisherId == publisherId);
-                //Console.WriteLine($"Selected publisher: {publisher.PublisherName}");
                 return publisher;
 
             }
@@ -239,7 +288,7 @@ namespace BookStoreDbFirst
             while (true)
             {
 
-                Console.WriteLine("Would you like to add title from existing authors?");
+                Console.WriteLine("Would you like to select from existing authors?");
                 var allAuthors = await dbs.GetAllAuthors();
 
                 for (int i = 0; i < allAuthors.Count; i++)
@@ -262,8 +311,6 @@ namespace BookStoreDbFirst
                     }
                     Console.WriteLine($"Chosen Author: {author.FirstName} {author.LastName}");
                     return author;
-
-                    //Console.WriteLine("End of test //////////////////////////////");
                 }
                 else if (auChoice == "2")
                 {
@@ -369,7 +416,7 @@ namespace BookStoreDbFirst
             while (true)
             {
 
-                Console.WriteLine("What date was the title released? yyyy/mm/dd");
+                Console.WriteLine("Enter date in format: yyyy/mm/dd");
                 if (!DateOnly.TryParse(Console.ReadLine(), out DateOnly date))
                 {
                     Console.WriteLine("Invalid Date. \nhas to be yyyymmdd with either of / , .  Between year, month and day.");
@@ -382,9 +429,10 @@ namespace BookStoreDbFirst
 
         public static async Task<string> SelectISBN13(DbService dbs)
         {
-            while (true)
+            string? isbn13valid = null;
+            while (isbn13valid == null)
             {
-                Console.WriteLine("Add a new ISBN13 Number. \n(Has to be 13 numbers) not matching any other book titles");
+                Console.WriteLine("Add a new ISBN13 Number. \n(Has to be 13 numbers) not matching any other book titles\nCan not be changed later.");
                 string strIsbn13 = Console.ReadLine();
                 var titles = await dbs.GetAllBookTitlesInfo();
 
@@ -400,9 +448,10 @@ namespace BookStoreDbFirst
                     Console.WriteLine("ISBN13 number already exist for another title");
                     continue;
                 }
-                return strIsbn13;
 
+                isbn13valid = strIsbn13;
             }
+            return isbn13valid;
         }
 
         public static async Task<string> SelectLanguage(DbService dbs)
@@ -471,27 +520,14 @@ namespace BookStoreDbFirst
 
         public static async Task AddNewBookTitle(DbService dbs)
         {
-
             var author = await SelectAuthor(dbs);
-            ////Console.WriteLine($"Test// {author.FirstName} {author.LastName}");
-
             var publisher = await SelectPublisher(dbs);
-            //Console.WriteLine($"Publisher Name {publisher.PublisherName}");
-
             var genre = await SelectGenre(dbs);
-            //Console.WriteLine($"//Test {genre.GenreName}");
-
+            Console.WriteLine("What date was the title release in?");
             var date = SelectDate();
-            //Console.WriteLine($"//Test Selected date: {date}");
-
             var isbn13 = await SelectISBN13(dbs);
-            //Console.WriteLine(isbn13);
-
             var language = await SelectLanguage(dbs);
-            //Console.WriteLine($"//Test Selected lan: {language}");
-
             var price = SelectPrice();
-            //Console.WriteLine($"Price: {price}");
 
             Console.WriteLine("Enter the name of the new title");
             string titlename = Console.ReadLine();
@@ -512,12 +548,7 @@ namespace BookStoreDbFirst
             await dbs.CreateBookTitle(title);
         }
 
-        //  price left and title for new book.
 
-        //add new title 
-        //add all the information necessary ()
-        // ISBN13 - can't be any other existing ones
-        // title, language, price, release date, AuhtorID, PublischedID, GenreID
 
 
         // - check if author and publisher exist 
