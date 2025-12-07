@@ -43,6 +43,20 @@ namespace BookStoreDbFirst
             return genre;
         }
 
+        public async Task<StockBalance> AddTitleToStock(int store, BookTitle title, int amount)
+        {
+            var stockBalance = new StockBalance
+            {
+
+                Isbn13 = title.Isbn13,
+                BookAmounts = amount,
+                StoreId = store,
+
+            };
+            _context.StockBalances.Add(stockBalance);
+            await _context.SaveChangesAsync();
+            return stockBalance;
+        }
 
 
 

@@ -125,9 +125,10 @@ namespace BookStoreDbFirst
 
 
             var title = await SelectBookTitle(dbs);
-            //IF TITLE DOES NOTEXIST IN THE STORE, ADD IT
+
 
             var stockinfo = await dbs.GetStockBalandeInfo();
+
 
 
             Console.Write("Update the new amount of books: ");
@@ -143,12 +144,15 @@ namespace BookStoreDbFirst
             }
 
 
+
             var update = stockinfo.FirstOrDefault(sb => sb.StoreId == storeID && sb.Isbn13 == title.Isbn13);
 
 
             if (update == null)
             {
                 Console.WriteLine("No stock balance entry found for store and book combination ");
+                update = await dbs.AddTitleToStock((int)storeID, title, (int)bookAmount);
+                Console.WriteLine($"Added a {update.Isbn13Navigation.Title} to {update.Store.StoreName} amount: {update.BookAmounts}");
                 return;
             }
 
