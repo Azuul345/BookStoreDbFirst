@@ -103,17 +103,6 @@ namespace BookStoreDbFirst
 
 
 
-
-
-
-
-
-
-
-
-
-
-
         public static async Task UpdateStockBalanceFromExisting(DbService dbs)
         {
             //store
@@ -269,7 +258,7 @@ namespace BookStoreDbFirst
                 }
 
                 Console.WriteLine("Enter Author ID of Author you wish to select");
-                //var allAuthors = await dbs.GetAllAuthors();
+
 
 
                 if (!int.TryParse(Console.ReadLine(), out int authorID) || !allAuthors.Any(aid => aid.AuthorId == authorID) || authorID <= 0)
@@ -358,47 +347,6 @@ namespace BookStoreDbFirst
 
 
 
-        //public static async Task<Author> SelectAuthor(DbService dbs)
-        //{
-        //    while (true)
-        //    {
-
-        //        Console.WriteLine("Would you like to select from existing authors?");
-        //        var allAuthors = await dbs.GetAllAuthors();
-
-        //        for (int i = 0; i < allAuthors.Count; i++)
-        //        {
-        //            Console.WriteLine($"Author ID: {allAuthors[i].AuthorId}. First Name: {allAuthors[i].FirstName} Last Name: {allAuthors[i].LastName} Birthday: {allAuthors[i].Birthday} ");
-
-        //        }
-
-        //        Console.WriteLine(" \n[1] Yes \n[2] No");
-        //        string auChoice = Console.ReadLine();
-        //        Author? author = null;
-
-        //        if (auChoice == "1")
-        //        {
-        //            author = await ChooseFromExistingAuthor(dbs);
-        //            if (author == null) //maybe not needed
-        //            {
-        //                Console.WriteLine("No Author selected");
-
-        //            }
-        //            Console.WriteLine($"Chosen Author: {author.FirstName} {author.LastName}");
-        //            return author;
-        //        }
-        //        else if (auChoice == "2")
-        //        {
-        //            author = await CreateANewAuthor(dbs);
-        //            return author;
-        //        }
-        //        else
-        //        {
-        //            Console.WriteLine("Invalid Choice");
-        //            continue;
-        //        }
-        //    }
-        //}
 
 
         public static async Task<Publisher> SelectPublisher(DbService dbs)
